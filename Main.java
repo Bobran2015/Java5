@@ -1,5 +1,5 @@
 package com.company;
-
+//Задача 6. Удаление повторяющихся символов. Два варианта.
 import java.lang.reflect.Modifier;
 
 public class Main {
