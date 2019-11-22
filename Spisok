@@ -1,0 +1,150 @@
+//Класс Node
+package com.company;
+
+public class Node {
+    protected String sValue ;
+    protected Node sPrev ;
+    protected Node sNext ;
+
+    Node ( String sValue, Node sPrev, Node sNext ) {
+        this.sValue = sValue;
+        this.sPrev = sPrev;
+        this.sNext = sNext;
+    }
+}
+
+//Класс, реализующий список
+package com.company;
+
+public class Spisok {
+    private Node _head = null ; //Ссылка на первый элемент списка
+    private Node _tail = null ; //Ссылка на последний элемент списка
+    //private Node _find = null ; //Ссылка на найденный при поиске элемент
+
+    public void addEnd (String sValue) {
+        Node exsNode = new Node ( sValue, _tail, null ); //Создаем новый экземпляр списка
+        if (_head == null) {
+            _head = exsNode ; //Если список был пустой, присваиваем указателю начала созданный экземпляр
+        }
+        if (_tail != null) {
+            _tail.sNext = exsNode ; //Значению sNext предыдущего экземпляра (если непустой) присваиваем созданный экземпляр
+        }
+        _tail = exsNode; //Указателю конца присваиваем созданный экземпляр
+        //System.out.println ( _tail.sValue + " " + _tail.sPrev ) ;
+    }
+
+    public void addHome (String sValue) {
+        Node exsNode = new Node ( sValue, null, _head ); //Создаем новый экземпляр списка
+        if (_tail == null) {
+            _tail = exsNode ; //Если список был пустой, присваиваем указателю конца созданный экземпляр
+        }
+        if (_head != null) {
+            _head.sPrev = exsNode ; //Значению sPrev предыдущего экземпляра присваиваем созданный экземпляр
+        }
+        _head = exsNode ; //Указателю начала присваиваем созданный экземпляр
+        //System.out.println ( _head.sValue + " " + _head.sPrev ) ;
+    }
+
+    public Node nIndex ( String sValue ) {
+        if (_head == null) {
+            System.out.println ( "Список пустой." ) ;
+            return null ;
+        }
+        else {
+            Node tempNode = _head ;
+            while ( tempNode != null ) {
+                if ( tempNode.sValue.equals ( sValue ) ) {
+                    System.out.println ( "Значение " + sValue + " в списке найдено по адресу " + tempNode + "." ) ;
+                    //_find = tempNode ;
+                    return tempNode ;
+                }
+                tempNode = tempNode.sNext ;
+            }
+            System.out.println ( "Значение " + sValue + " в списке не найдено." ) ;
+            return null ;
+        }
+    }
+
+    public void nDelete ( String sValue ) {
+        Node tempNode = nIndex ( sValue ) ; //Находим экземпляр с заданным значением
+        //System.out.println ( "Ссылка " + tempNode + "." ) ;
+        if ( tempNode == null ) {
+            return ; //Если не нашли экземпляр с заданным значением, выходим из метода
+        }
+        else {
+            if ( _head == tempNode ) {
+                _head = tempNode.sNext ; //Если удаляемый был первым, присваиваем началу ссылку на следующий экземпляр
+            }
+            else {
+                tempNode.sPrev.sNext = tempNode.sNext ; //Иначе присваиваем предыдущему ссылку на следующий за удаляемым экземпляр
+            }
+            if ( _tail == tempNode ) {
+                _tail = tempNode.sPrev ; //Если удаляемый был последним, присваиваем концу ссылку на предыдущий экземпляр
+            }
+            else {
+                tempNode.sNext.sPrev = tempNode.sPrev ; //Иначе присваиваем следующему за удаляемым ссылку на предыдущий удаляемому экземпляр
+            }
+            System.out.println ( "Значение " + sValue + " удалено." ) ;
+        }
+    }
+
+    public void printSp () {
+        if ( _head != null ) {
+            Node tempNode = _head ;
+            StringBuffer str = new StringBuffer() ;
+            //str = null ;
+            while ( tempNode != null ) {
+                if ( tempNode != _head ) {
+                    str = str.append ( "; " ) ;
+                }
+                str = str.append ( tempNode.sValue );
+                tempNode = tempNode.sNext;
+            }
+            str = str.append ( "." ) ;
+            System.out.println ( str.toString() );
+        }
+    }
+
+    public int sCount () {
+        int i = 0 ;
+        if ( _head != null ) {
+            Node tempNode = _head ;
+            while ( tempNode != null ) {
+                tempNode = tempNode.sNext ;
+                i++ ;
+            }
+        }
+        return i ;
+    }
+
+    public static void main ( String[] args ) {
+        long time = System.currentTimeMillis() ;
+        //Задача 3
+        Spisok goroda = new Spisok () ;
+        goroda.nIndex ( "Екатеринбург" ) ;
+        System.out.println ( "В списке " + goroda.sCount() + " экземпляров." ) ;
+        goroda.addEnd ( "Верхотурье" ) ;
+        goroda.addHome ( "Киев" ) ; ;
+        goroda.addEnd ( "Екатеринбург" ) ;
+        goroda.addEnd ( "Сочи" ) ;
+        goroda.addEnd ( "Манчестер" ) ;
+        goroda.addHome ( "Москва" ) ;
+        goroda.addEnd ( "Нижний Новгород" ) ;
+        goroda.printSp () ;
+        System.out.println ( "В списке " + goroda.sCount() + " экземпляров." ) ;
+        goroda.nIndex ( "Екатеринбург" ) ;
+        goroda.nIndex ( "Сызрань" ) ;
+        goroda.addHome ( "Вашингтон" ) ;
+        goroda.addEnd ( "Лондон" ) ;
+        goroda.printSp () ;
+        System.out.println ( "В списке " + goroda.sCount() + " экземпляров." ) ;
+        goroda.nDelete ( "Вашингтон" ) ;
+        goroda.nDelete ( "Лондон" ) ;
+        goroda.nDelete ( "Манчестер" ) ;
+        goroda.printSp () ;
+        System.out.println ( "В списке " + goroda.sCount() + " экземпляров." ) ;
+
+        time = System.currentTimeMillis() - time ;
+        System.out.println ("Время выполнения = " + time + " мс" ) ;
+    }
+}
