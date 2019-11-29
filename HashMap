@@ -1,0 +1,44 @@
+package com.company;
+import java.util.HashMap;
+
+public class IC {
+    public static void main(String[] args) {
+        String[] town = new String[]{"Москва", "Екатеринбург", "Тюмень", "Пермь", "Челябинск", "Тюмень", "Нижневартовск", "Курган", "Уфа", "Екатеринбург"};
+        HashMap<Integer, String> hnt = new HashMap(10);
+        for (Integer i = 0; i < 10; i++) { //Заполнение исходной коллекции
+            hnt.put(i, town[i]); //TreeMapCl.generateInt()
+        }
+        TreeMapCl.showC(hnt);
+        System.out.println();
+        HashMap<HashMap<Integer, String>, Integer> nnt = new HashMap<HashMap<Integer, String>, Integer> (hnt.size());
+        nnt = transpC(hnt); // Выполнение функции смены местами ключа и значения
+        showCHash(nnt);
+    }
+    
+    //Функция смены местами ключа и значения
+    public static HashMap<HashMap<Integer, String>, Integer> transpC(HashMap<Integer, String> hnt) {
+        //nnt - коллекция-результат 
+        HashMap<HashMap<Integer, String>, Integer> nnt = new HashMap<HashMap<Integer, String>, Integer> (hnt.size());
+        for (Integer i : hnt.keySet()) {
+            HashMap<Integer, String> jMap = new HashMap<Integer, String> (); //Объявление коллекции для нового ключа
+            jMap.put(i, hnt.get(i) ); //Заполнение коллекции для ключа. Для её ключа используем значение ключа 
+                                      //из исходной коллекции
+            nnt.put(jMap, i) ; Заполнение коллекции-результата
+        }
+        return nnt;
+    }
+    
+    public static void showCHash(HashMap<HashMap<Integer, String>, Integer> nnt) {
+        for (HashMap<Integer, String> jMap : nnt.keySet()) {
+            showC(jMap) ;
+            System.out.println ( nnt.get ( jMap ) + "; " ) ;
+        }
+        System.out.println () ;
+    }
+   
+    public static void showC (Map<Integer, String> hnt) {
+        for (Integer i : hnt.keySet()) {
+            System.out.print ( i + " " + hnt.get ( i ) + "; " ) ;
+        }
+    }
+}
