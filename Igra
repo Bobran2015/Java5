@@ -1,0 +1,50 @@
+package com.company;
+
+import java.util.HashMap;
+
+public class Igra {
+
+    public static void main ( String[] args ) {
+        String[] rez = new String[]{"Ivan 5", "Petr 3", "Alex 10", "Petr 8", "Ivan 6.", "Alex 5", "Ivan 1", "Petr 5", "Alex 1"};
+        winger(rez);
+    }
+    public static void winger(String [] rez) {
+        StringBuffer nameMax = new StringBuffer();//Для хранения имени игрока-лидера на текущий момент
+        int pointMax = 0;//Максимальное количество очков на текущий момент
+        HashMap< String, Integer> hnt = new HashMap(rez.length);//Коллекция для хранения результатов игроков нарастающим итогом
+        for (int i = 0; i < rez.length; i++) {
+            String [] subrez = rez[i].split(" ");//Разделение текстового значения на имя и результат
+            Integer point = 0 ;//Объявление переменной для хранения текущего результата
+            try { //Проверка возможности преобразовать String в Integer
+                point = Integer.valueOf(subrez[1]);
+            } catch (NumberFormatException nfe) {
+                System.out.println ("Для игрока \"" + subrez[0] +"\" передан некорректный результат: \"" + subrez[1] +"\".") ;
+                continue;
+            }
+            if (hnt.containsKey ( subrez[0] ) ) { //Если в коллекции запись с именем игрока есть, предыдущие его результаты суммируем с текущим
+                point += hnt.get(subrez[0]) ;
+            }
+            if ( point > pointMax ) { //Если суммарный результат игрока превысил максимальный, обновляем максимальный результат и имя игрока-лидера
+                pointMax = point;
+                nameMax.setLength(0);
+                nameMax.append(subrez[0]);
+            }
+            hnt.put ( subrez[0], point ); //Записываем в коллекцию имя игрока и его суммарное количество очков
+        }
+        System.out.println ("Победитель - " + nameMax + ", результат - " + pointMax + " очк" + ending(pointMax) + "!") ;
+    }
+    public static String ending (int z) { //Правильное окончание-))
+        String ok = new String();
+        int a = z % 10 ;
+        switch (a) {
+            case 1: ok = "о";
+                break;
+            case 2:
+            case 3:
+            case 4: ok = "а";
+                break;
+            default: ok = "ов";
+        }
+        return ok;
+    }
+}
