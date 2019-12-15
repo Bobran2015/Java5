@@ -1,0 +1,87 @@
+package com.company;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Scanner;
+
+public class ClassLog {
+
+    private static Path file = Paths.get("D:\\Игнат\\J2\\logJ2.txt");
+
+    public static String inputDate () { //Функция ввода даты в консоли
+        System.out.println("Введите дату отчета в формате ДД.ММ.ГГГГ");
+        Scanner sc = new Scanner (System.in);
+        return sc.nextLine();
+        //int day = sc.nextInt();
+        //int month = sc.nextInt();
+        //int year = sc.nextInt();
+    }
+
+    //Функция записи данных о дате/времени и операции в log-файл
+    public static void toLogList (String deystv) throws IOException {
+        if (Files.exists(file) == false) {
+            Files.createFile(file);
+        }
+        try(FileWriter fw = new FileWriter(file.toFile(), true)) {
+            //String tms = (new Date()).toString();
+            long tms = System.currentTimeMillis()/1000L; //В log-файле данные о дате и времени будут храниться в миллисекундах
+            fw.write(tms + " - " + deystv); //+ "\n" //Запись данных о дате/времени и операции в log-файл
+            fw.write (System.getProperty("line.separator"));//Перенос строки
+            //System.out.println((new Date(tms*1000L)).toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //Функция вывода информации из log-файла за выбранную дату
+    public static void printLogList (String dateInStr) throws ParseException{
+        SimpleDateFormat fm = new SimpleDateFormat("dd.MM.yyyy");
+        if (Files.exists(file)) {
+            System.out.println("Файл существует.");
+            try {
+                Date date = fm.parse(dateInStr); //Преобразование из String в Date
+                long sec = date.getTime()/1000L; //Преобразование даты в секунды
+                System.out.println("Перечень за " + dateInStr);
+                List<String> lists = Files.readAllLines(file); //Чтение log-файла построчно в коллекцию
+                for (String st : lists) {
+                    String[] subrez = st.split(" - "); //разделение строки на смысловые фрагменты
+                    long stTime = Long.valueOf(subrez[0]); //Преобразование из String в Long
+                    if (stTime >= sec & stTime < sec + 86400) { //60*60*24 // Если запись соответствует выбранной дате, печатаем её
+                        System.out.println((new Date(stTime*1000L)).toString() + " - " + subrez[1] );
+                    }
+                }
+            } catch (IOException ex) {
+                System.out.println("Ошибка: " + ex.getMessage());
+                ex.printStackTrace();
+            }
+            catch (ParseException ex) {
+                throw ex;
+                //System.out.println("Ошибка. Ведена дата в формате, отличном от ДД.ММ.ГГГГ. " + ex.getMessage());
+                //ex.printStackTrace();
+            }
+            catch (NumberFormatException ex) {
+                System.out.println("Ошибка. Вместо времени в секундах иная информация: " + ex.getMessage());
+            }
+        }
+        else System.out.println("Файл " + file.getFileName() + " не существует!");
+    }
+    public static void main ( String[] args ) {
+        try {
+            toLogList("ADD");
+            toLogList("CULC");
+            printLogList(inputDate());
+        }
+        catch (ParseException ex) {
+            System.out.println("Ошибка. Ведена дата в формате, отличном от ДД.ММ.ГГГГ. " + ex.getMessage());
+        }
+        catch (IOException ex) {
+            System.out.println("Ошибка чтения//записи в файл: " + ex.getMessage());
+        }
+    }
+}
